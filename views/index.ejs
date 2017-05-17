@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Carrinho de Compra</title>
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- PRODUTOS CADASTRADOS -->
+         <div class="row">
+            <div class="col-md-12">
+                <h2>Qual produto deseja comprar ?</h2>             
+
+                <table class="table table-bordered" id="tabela">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>Nome</td>
+                            <td>Descrição</td>
+                            <td>Preço</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% produtos.forEach(function(produto, index) {%>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="checkbox_<%- produto.id %>" onclick="novo_item(<%- produto.id %>)">
+                                </td>
+                                <td><%- produto.nome %></td>
+                                <td><%- produto.descricao %></td>
+                                <td class="preco"><%- produto.preco %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+                <p id="total">Total: R$ </p>
+                <hr>
+                <button class="btn btn-primary">Finalizar Pedido</button>
+            </div>
+        </div>
+        <!-- ./PRODUTOS CADASTRADOS -->
+    </div>
+
+    <script>
+        //var total = document.getElementById("total");
+        //total.innerHTML = '0.0';
+
+        var total = 0.0;
+
+        function novo_item(idElement){
+            var checkbox = document.getElementById("checkbox_" + idElement).parentNode;
+            console.log(checkbox);
+        }
+    </script>
+
+</body>
+
+</html>
