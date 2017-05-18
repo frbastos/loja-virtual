@@ -46,7 +46,6 @@
                 <table class="table table-bordered" id="tabela">
                     <thead>
                         <tr>
-                            <td>#</td>
                             <td>Nome</td>
                             <td>Descrição</td>
                             <td>Preço</td>
@@ -56,12 +55,11 @@
                     <tbody>
                         <% produtos.forEach(function(produto, index) {%>
                             <tr>
-                                <td><%- produto.id %></td>
                                 <td><%- produto.nome %></td>
                                 <td><%- produto.descricao %></td>
                                 <td><%- produto.preco %></td>
                                 <td>
-                                    <a href="/admin/remove/<%- produto.id %>">Remover</a>
+                                    <a href="/admin/remove/<%- produto._id %>">Remover</a>
                                 </td>
                             </tr>
                         <% }) %>

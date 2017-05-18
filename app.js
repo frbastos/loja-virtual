@@ -1,31 +1,21 @@
+
+//mongod.exe --dbpath C:\data\db\
+
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var app = express();
 
-var id = 3;
+var esquemaProduto = new mongoose.Schema({
+    nome: String,
+    descricao: String,
+    preco: Number
+});
 
-var produtos = [
-    {
-        id: 1,
-        nome: "Playstation",
-        descricao: "Video Game",
-        preco: 2700
-    },
-    {
-        id: 2,
-        nome: "Mesa",
-        descricao: "Madeira",
-        preco: 150
-    }
-];
+var Produtos = mongoose.model('produtos', esquemaProduto);
 
-function Produto(id, nome, descricao, preco){
-    this.id = id;
-    this.nome = nome;
-    this.descricao = descricao;
-    this.preco = preco;
-}
+var db = mongoose.connect('mongodb://localhost/loja_virtual_db');
 
 // configuração do express para todas as views dentro do diretorio views
 app.set('views', __dirname + '/views');
@@ -40,11 +30,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // Rotas do Cliente
 app.get('/', function(request, response){
-    var params = {
-        produtos: produtos
-    };
 
-    response.render('index', params);
+    Produtos.find({}, function(erro, produtosEncontrados){
+
+        var params = {
+            produtos: produtosEncontrados
+        };
+
+        response.render('index', params);
+    });
+
 });
 
 app.get('/consulta-pedido', function(request, response){
@@ -54,29 +49,50 @@ app.get('/consulta-pedido', function(request, response){
 // Rotas do Administrador
 app.post('/admin/cadastro', function(request, response){
     var body = request.body;
-    var produto = new Produto(id++, body.nome, body.descricao, body.preco);
 
-    //Salvar produto banco de dados
-    produtos.push(produto);
+    var produto = new Produtos({
+        nome: body.nome,
+        descricao: body.descricao,
+        preco: body.preco  
+    });
 
-    response.redirect('/admin/produtos-cadastrados');
+    produto.save(function(erro){
+        if(erro){
+            console.log('Deu erro na aplicação');
+        }else{
+            response.redirect('/admin/produtos-cadastrados');
+        }
+    });
+    
 });
 
 app.get('/admin/produtos-cadastrados', function(request, response){
-    var params = {produtos: produtos};
-    response.render('produtos', params);
+
+    // busca lista de produtos com mongoose no mongo db
+    Produtos.find({}, function(erro, produtosEncontrados){
+        if(erro){
+            console.log('Deu merda');
+        }else{
+            var params = {produtos: produtosEncontrados};
+        response.render('produtos', params);
+        }
+    });
+    
 });
 
 
 app.get('/admin/remove/:id', function(request, response) {
     var id = request.params.id;
-    produtos.forEach(function(produto, index){
-        if(produto.id == id){
-            produtos.splice(index,1);
+
+    Produtos.findById(id, function(erro, produtoEncontrado){
+        if(erro){
+            console.log('Deu merda');
+        }else{
+            produtoEncontrado.remove();
+            response.redirect('/admin/produtos-cadastrados');
         }
     });
 
-    response.redirect('/admin/produtos-cadastrados');
 });
 
 app.listen(3000, function(){
