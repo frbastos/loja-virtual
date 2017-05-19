@@ -1,5 +1,6 @@
 
 //mongod.exe --dbpath C:\data\db\
+//./mongod --dbpath /Users/mk/Downloads/database
 
 var express = require('express');
 var bodyParser = require('body-parser');
