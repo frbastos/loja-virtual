@@ -53,13 +53,19 @@ var db = mongoose.connect('mongodb://localhost/loja_virtual_db');
 // Rotas do Cliente
 app.get('/', function(request, response){
 
+        response.render('index');
+    });
+
+
+app.get('/cliente', function(request, response){
+
     // Busca todos os produtos cadastrados
 
     Produtos.find({}, function(erro, produtosEncontrados){
         var params = {
             produtos: produtosEncontrados
         };
-        response.render('index', params);
+        response.render('cliente', params);
     });
 
 });
@@ -96,13 +102,17 @@ app.post('/cria-pedido', function(request, response){
 });
 
 app.get('/consulta-pedido', function(request, response){
-    var numero_pedido = request.query.numero_pedido;
+    var id_pedido = request.query.numero_pedido;
 
-    Pedidos.findById(numero_pedido, function(erro, pedido){
+    Pedidos.findById(id_pedido, function(erro, pedidoEncontrado){
         if(erro){
             console.log('Erro na hora de consultar pedido');
         }else{
-            response.json(pedido);
+            var params = {
+              pedido: pedidoEncontrado
+            };
+            console.log(pedidoEncontrado);
+            response.render('consulta', params);
         }
     });
 });
